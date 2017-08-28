@@ -19,7 +19,7 @@ get "*" do
   healthy = true
 
   a = Artii::Base.new :font => 'graffiti'
-  instance_number = (ENV['HOSTNAME'] || "dev-1").split("-").last
+  instance_number = (ENV['KONTENA_SERVICE_INSTANCE_NUMBER'] || "0")
 
   docker_ps = begin
     `docker ps 2>&1`
@@ -35,10 +35,7 @@ get "*" do
     "docker logs FAIL #{ex.inspect}"
   end
 
-  kontena_agent_logs_after_ttin = nil
-  kontena_agent_got_ttin = nil
-  kontena_agent_ttin_tested = false
-  if rand(settings.ttin_every) == 0
+  kontena_agent_logs_after_ttin, kontena_agent_got_ttin, kontena_agent_ttin_tested = if rand(settings.ttin_every) == 0
     kontena_agent_ttin_tested = true
     `docker kill --signal=TTIN kontena-agent`
 
@@ -49,12 +46,28 @@ get "*" do
       "docker logs after ttin FAIL #{ex.inspect}"
     end
 
-    kontena_agent_got_ttin = if kontena_agent_logs_after_ttin.match("WARN -- Kontena::Agent: Thread")
-      true
+    kontena_agent_got_ttin = if matches = kontena_agent_logs_after_ttin.match(/\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}).*\s--\sKontena::Agent:\sThread/)
+      current_minute = Time.now.minute
+
+      logs_minute = (matches[1]).to_i
+      if current_minute == logs_minute || current_minute.pred == logs_minute
+        true
+      else
+        healthy = false
+        false
+      end
     else
       healthy = false
       false
     end
+
+    [kontena_agent_logs_after_ttin, kontena_agent_got_ttin, kontena_agent_ttin_tested]
+  else
+    kontena_agent_logs_after_ttin = nil
+    kontena_agent_got_ttin = nil
+    kontena_agent_ttin_tested = false
+
+    [kontena_agent_logs_after_ttin, kontena_agent_got_ttin, kontena_agent_ttin_tested]
   end
 
   weave_connections, weave_targets = begin
