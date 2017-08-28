@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  web:
+    build: .
+    image: mattipaksula/kontena-watchdog
+    command: "web"
+    environment:
+      - PORT=9999
+      - TTIN_EVERY=3
+    ports:
+      - 9999:9999
+    volumes:
+      - ./app:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    pid: host

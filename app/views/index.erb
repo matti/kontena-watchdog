@@ -1,0 +1,38 @@
+<html>
+<head>
+  <% if meta_refresh_seconds %>
+    <meta http-equiv="refresh" content="<%= meta_refresh_seconds %>">
+  <% end %>
+</head>
+
+<body>
+  <h1 style="float: left;">kontena-supervisor</h1>
+  <a href="?refresh=1">Start refreshing</a>
+  <hr style="clear: both;">
+<pre>
+<%= instance_number_ascii %>
+health: <%= healthy ? "OK" : "FAIL" %>
+kontena_agent_ttin_tested: <%= kontena_agent_ttin_tested %>
+<%- if kontena_agent_ttin_tested %>
+kontena_agent_got_ttin: <%= kontena_agent_got_ttin %>
+<%- end %>
+host date: <%= host_date_now %>
+weave_targets: <%= weave_targets %>
+weave_connections: <%= weave_connections %>
+KONTENA_NODE_NAME=<%= ENV['KONTENA_NODE_NAME'] %>
+
+kontena-agent logs:
+<%= kontena_agent_logs %>
+
+<%- if kontena_agent_ttin_tested %>
+kontena-agent logs after TTIN:
+<%= kontena_agent_logs_after_ttin %>
+<%- end %>
+
+docker ps:
+<%= docker_ps %>
+
+
+</pre>
+</body>
+</html>

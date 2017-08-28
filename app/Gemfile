@@ -1,0 +1,12 @@
+source "https://rubygems.org"
+
+gem "sinatra"
+gem "puma"
+gem "artii"
+gem "excon"
+gem "erubis"
+
+group :development do
+  gem "rerun"
+  gem "sinatra-contrib"
+end

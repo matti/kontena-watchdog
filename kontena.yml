@@ -1,0 +1,22 @@
+stack: kontena-watchdog
+version: 0.1.0
+expose: web
+
+services:
+  web:
+    image: mattipaksula/kontena-watchdog
+    command: web
+    deploy:
+      strategy: daemon
+      wait_for_port: 9999
+      min_health: 0.5
+      interval: 1h
+    environment:
+      - PORT=9999
+      - TTIN_EVERY=100
+    network_mode: host
+    pid: host
+    affinity:
+      - label!=no-kontena-watchdog=yes
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
