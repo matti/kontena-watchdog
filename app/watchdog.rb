@@ -80,7 +80,9 @@ get "*" do
     ["weave FAIL: #{ex.inspect}", "weave FAIL #{ex.inspect}"]
   end
 
-  erb :index, locals: {
+  http_code = healthy ? 200 : 500
+
+  halt http_code, erb(:index, locals: {
     instance_number_ascii: a.asciify(instance_number),
     meta_refresh_seconds: params[:refresh],
     host_date_now: Time.now,
@@ -92,5 +94,5 @@ get "*" do
     healthy: healthy,
     kontena_agent_got_ttin: kontena_agent_got_ttin,
     kontena_agent_ttin_tested: kontena_agent_ttin_tested
-  }
+  })
 end
