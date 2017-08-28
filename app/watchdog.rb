@@ -40,13 +40,13 @@ get "*" do
     `docker kill --signal=TTIN kontena-agent`
 
     kontena_agent_logs_after_ttin = begin
-      `docker logs --tail=20 kontena-agent`
+      `docker logs --tail=100 kontena-agent`
     rescue Exception => ex
       healthy = false
       "docker logs after ttin FAIL #{ex.inspect}"
     end
 
-    kontena_agent_got_ttin = if matches = kontena_agent_logs_after_ttin.match(/\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}).*\s--\sKontena::Agent:\sThread/)
+    kontena_agent_got_ttin = if matches = kontena_agent_logs_after_ttin.match(/\[\d{4}-\d{2}-\d{2}T\d{2}:(\d{2}):\d{2}.*\s--\sKontena::Agent:\sThread/)
       current_minute = Time.now.min
 
       logs_minute = (matches[1]).to_i
