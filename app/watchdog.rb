@@ -47,7 +47,7 @@ get "*" do
     end
 
     kontena_agent_got_ttin = if matches = kontena_agent_logs_after_ttin.match(/\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}).*\s--\sKontena::Agent:\sThread/)
-      current_minute = Time.now.minute
+      current_minute = Time.now.min
 
       logs_minute = (matches[1]).to_i
       if current_minute == logs_minute || current_minute.pred == logs_minute
