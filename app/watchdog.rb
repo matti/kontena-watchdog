@@ -29,7 +29,7 @@ get "*" do
   end
 
   kontena_agent_logs = begin
-    `docker logs --tail=20 kontena-agent`
+    `docker logs --tail=200 kontena-agent`
   rescue Exception => ex
     healthy = false
     "docker logs FAIL #{ex.inspect}"
