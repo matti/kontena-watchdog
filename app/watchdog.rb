@@ -24,9 +24,15 @@ get "*" do
   filesystem_write = begin
     system("touch watchdog_touch_test")
   rescue Exception => ex
-    puts "filesystem write exception: #{ex.inspect}"
     healthy = false
-    false
+    "filesystem write FAIL: #{ex.inspect}"
+  end
+
+  kontena_agent_ps = begin
+    output = `docker ps | grep kontena-agent`
+    raise "container kontena-agent not in docker ps" if output == ""
+  rescue Exception => ex
+    "kontena agent FAIL: #{ex.inspect}"
   end
 
   docker_ps = begin
@@ -102,6 +108,7 @@ get "*" do
     healthy: healthy,
     kontena_agent_got_ttin: kontena_agent_got_ttin,
     kontena_agent_ttin_tested: kontena_agent_ttin_tested,
-    filesystem_write: filesystem_write
+    filesystem_write: filesystem_write,
+    kontena_agent_ps: kontena_agent_ps
   })
 end
