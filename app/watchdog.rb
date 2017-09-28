@@ -31,6 +31,7 @@ get "*" do
   kontena_agent_ps = begin
     output = `docker ps | grep kontena-agent`
     raise "container kontena-agent not in docker ps" if output == ""
+    output
   rescue Exception => ex
     "kontena agent FAIL: #{ex.inspect}"
   end
