@@ -25,6 +25,7 @@ get "*" do
     system("touch watchdog_touch_test")
   rescue Exception => ex
     puts "filesystem write exception: #{ex.inspect}"
+    healthy = false
     false
   end
 
