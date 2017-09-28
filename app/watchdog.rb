@@ -21,6 +21,13 @@ get "*" do
   a = Artii::Base.new :font => 'graffiti'
   instance_number = (ENV['KONTENA_SERVICE_INSTANCE_NUMBER'] || "0")
 
+  filesystem_write = begin
+    system("touch watchdog_touch_test")
+  rescue Exception => ex
+    puts "filesystem write exception: #{ex.inspect}"
+    false
+  end
+
   docker_ps = begin
     `docker ps 2>&1`
   rescue Exception => ex
@@ -93,6 +100,7 @@ get "*" do
     kontena_agent_logs_after_ttin: kontena_agent_logs_after_ttin,
     healthy: healthy,
     kontena_agent_got_ttin: kontena_agent_got_ttin,
-    kontena_agent_ttin_tested: kontena_agent_ttin_tested
+    kontena_agent_ttin_tested: kontena_agent_ttin_tested,
+    filesystem_write: filesystem_write
   })
 end
